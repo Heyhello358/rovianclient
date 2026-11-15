@@ -18,6 +18,11 @@ public final class RovianMenuScreen extends Screen {
         this.parent = parent;
     }
 
+    public void reloadShop() {
+        clearWidgets();
+        init();
+    }
+
     @Override
     protected void init() {
         int center = width / 2;
