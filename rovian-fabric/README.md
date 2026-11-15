@@ -13,7 +13,7 @@ A client-side Fabric mod for Minecraft **1.21.11**.
 
 1. Install Fabric Loader for Minecraft 1.21.11.
 2. Install Fabric API for Minecraft 1.21.11.
-3. Put `rovian-client-0.1.0.jar` in your Minecraft instance's `mods` folder.
+3. Put `Rovian-Client-0.1.1.jar` in your Minecraft instance's `mods` folder.
 4. Launch the Fabric 1.21.11 profile.
 
 ## Build
@@ -24,7 +24,7 @@ Requires Java 21.
 gradle build
 ```
 
-The mod JAR is written to `build/libs/rovian-client-0.1.0.jar`.
+The mod JAR is written to `build/libs/Rovian-Client-0.1.1.jar`.
 
 ## Planned, not yet implemented
 
