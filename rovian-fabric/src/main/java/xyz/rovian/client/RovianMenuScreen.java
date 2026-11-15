@@ -53,7 +53,7 @@ public final class RovianMenuScreen extends Screen {
             String id = item.get("id").getAsString();
             String name = item.get("name").getAsString();
             int price = item.get("price").getAsInt();
-            int y = 134 + i * 29;
+            int y = 154 + i * 29;
             addRenderableWidget(Button.builder(
                     Component.literal("BUY " + name + "  —  " + price + " Jems"),
                     b -> RovianApi.purchase(id)
@@ -78,7 +78,7 @@ public final class RovianMenuScreen extends Screen {
                 12, 0xFF39C5F2);
         graphics.drawCenteredString(font, Component.literal("Jems: " + RovianApi.jems()
                 + (RovianApi.linked() ? "  •  Discord linked" : "  •  Discord not linked")),
-                width / 2, 128, 0xFFFFFFFF);
+                width / 2, 130, 0xFFFFFFFF);
         graphics.drawCenteredString(font, Component.literal(RovianApi.status()),
                 width / 2, height - 88, 0xFFB7C2CE);
         super.render(graphics, mouseX, mouseY, partialTick);
