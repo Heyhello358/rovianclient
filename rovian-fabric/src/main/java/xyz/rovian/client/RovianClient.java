@@ -5,13 +5,13 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public final class RovianClient implements ClientModInitializer {
     public static final String MOD_ID = "rovian";
-    public static final ResourceLocation MODAK_FONT =
-            ResourceLocation.fromNamespaceAndPath(MOD_ID, "modak");
+    public static final Identifier MODAK_FONT =
+            Identifier.fromNamespaceAndPath(MOD_ID, "modak");
 
     private static KeyMapping openMenuKey;
 
