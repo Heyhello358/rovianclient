@@ -32,7 +32,8 @@ function App() {
   const [purchases, setPurchases] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("rovian.jems.purchases") || "[]"); } catch { return []; }
   });
-  const [notice, setNotice] = useState("");\n  const [capeItems, setCapeItems] = useState<ShopItem[]>([]);
+  const [notice, setNotice] = useState("");
+  const [capeItems, setCapeItems] = useState<ShopItem[]>([]);
   const [discordLinked, setDiscordLinked] = useState(false);
   useEffect(() => {
     invoke<{ name: string; version: string }>("app_info")
@@ -40,7 +41,14 @@ function App() {
       .catch(() => setAppVersion("Development"));
     try { setDiscordLinked(localStorage.getItem("rovian.discord.linked") === "true"); } catch { /* storage unavailable */ }
   }, []);
-  useEffect(() => {\n    const base = (import.meta as any).env?.VITE_ROVIAN_API_URL as string | undefined;\n    if (!base) return;\n    fetch(`${base.replace(/\\/$/, "")}/api/shop/items`).then(r => r.ok ? r.json() : Promise.reject()).then(data => {\n      if (Array.isArray(data.items)) setCapeItems(data.items.filter((x: any) => x.type === "cape").map((x: any) => ({ id: x.id, name: x.name, description: "Community cape uploaded by Rovian staff.", price: x.price, icon: "✦", imageUrl: x.imageUrl })));\n    }).catch(() => setNotice("Could not load the live shop catalog."));\n  }, []);\n  const ownedItems = useMemo(() => new Set(purchases), [purchases]);
+  useEffect(() => {
+    const base = (import.meta as any).env?.VITE_ROVIAN_API_URL as string | undefined;
+    if (!base) return;
+    fetch(`${base.replace(/\\/$/, "")}/api/shop/items`).then(r => r.ok ? r.json() : Promise.reject()).then(data => {
+      if (Array.isArray(data.items)) setCapeItems(data.items.filter((x: any) => x.type === "cape").map((x: any) => ({ id: x.id, name: x.name, description: "Community cape uploaded by Rovian staff.", price: x.price, icon: "✦", imageUrl: x.imageUrl })));
+    }).catch(() => setNotice("Could not load the live shop catalog."));
+  }, []);
+  const ownedItems = useMemo(() => new Set(purchases), [purchases]);
   function buy(item: ShopItem) {
     if (ownedItems.has(item.id)) { setNotice("You already own this item."); return; }
     if (jems < item.price) { setNotice("Not enough Jems. Link Discord to claim the 200 Jems reward, or earn Jems through future events."); return; }
