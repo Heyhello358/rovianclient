@@ -31,9 +31,21 @@ jobs:
         run: npx tauri icon public/rovian-mark.svg
       - name: Build desktop application
         run: npm run tauri:build
+      - name: Rename installer files
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          PLATFORM=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
+          ARCH=$(echo "$RUNNER_ARCH" | tr '[:upper:]' '[:lower:]')
+          find src-tauri/target/release/bundle -type f \\( -iname '*.exe' -o -iname '*.msi' -o -iname '*.dmg' -o -iname '*.deb' -o -iname '*.rpm' -o -iname '*.appimage' \\) -print0 |
+          while IFS= read -r -d '' file; do
+            extension="${file##*.}"
+            directory=$(dirname "$file")
+            mv "$file" "$directory/Rovian-Client-$VERSION-$PLATFORM-$ARCH.$extension"
+          done
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: rovian-${{ matrix.os }}
+          name: Rovian-Client-${{ matrix.os }}
           path: src-tauri/target/release/bundle/**/*
           if-no-files-found: error
