@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.sha }}
+          ref: rovian-fabric-1.21.11
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
