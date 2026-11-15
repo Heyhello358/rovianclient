@@ -43,3 +43,6 @@ docs/           roadmap, logo reference
 - `public/rovian-mark.svg` is a hand-drawn vector approximation of the supplied logo (`docs/logo-reference.jpg`). Replace it with the original vector if you have one.
 - Inspired by OneClient's feature set; no OneClient code, assets or branding are used.
 - Cosmetics must not be described as visible to other players until a backend exists. Nametags require an opt-in presence service, which will be designed in a later phase.
+
+## Live shop catalog
+Set `VITE_ROVIAN_API_URL` to the public HTTPS base URL of the Rovian bot API when building the launcher. The Shop page will load staff-uploaded cape items from `/api/shop/items`. The current wallet and checkout UI remains local-only until authenticated account purchases are implemented.
