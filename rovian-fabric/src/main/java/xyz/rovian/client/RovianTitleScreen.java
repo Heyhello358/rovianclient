@@ -7,7 +7,6 @@ import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FontDescription;
 
 public final class RovianTitleScreen extends Screen {
     public RovianTitleScreen() {
@@ -54,9 +53,10 @@ public final class RovianTitleScreen extends Screen {
         graphics.fill(centerX - 15, logoY + 36, centerX + 15, logoY + 44, 0xFF10151D);
         graphics.fill(centerX + 7, logoY + 28, centerX + 15, logoY + 44, 0xFF10151D);
 
-        Component title = Component.literal("Rovian Client")
-                .withStyle(style -> style.withFont(new FontDescription.Resource(RovianClient.MODAK_FONT)));
-        graphics.drawCenteredString(font, title, centerX, logoY + logoSize + 12, 0xFFFFFFFF);
+        graphics.drawCenteredString(font, Component.literal("ROVIAN CLIENT"),
+                centerX, logoY + logoSize + 12, 0xFFFFFFFF);
+        graphics.drawCenteredString(font, Component.literal("FABRIC 1.21.11"),
+                centerX, logoY + logoSize + 27, 0xFF9AA8B8);
 
         super.render(graphics, mouseX, mouseY, partialTick);
     }
