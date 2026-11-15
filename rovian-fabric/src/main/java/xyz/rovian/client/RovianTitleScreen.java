@@ -1,10 +1,9 @@
 package xyz.rovian.client;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.network.chat.Component;
@@ -47,7 +46,6 @@ public final class RovianTitleScreen extends Screen {
         int centerX = width / 2;
         int logoY = Math.max(24, height / 2 - 170);
 
-        // Simple cyan Rovian mark.
         graphics.fill(centerX - logoSize / 2, logoY, centerX + logoSize / 2,
                 logoY + logoSize, 0xFF21B8E8);
         graphics.fill(centerX - 15, logoY + 11, centerX + 15, logoY + 19, 0xFF10151D);
