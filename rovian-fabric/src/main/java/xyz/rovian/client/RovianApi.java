@@ -79,6 +79,9 @@ public final class RovianApi {
         request("GET", "/api/shop/items", "").thenAccept(body -> {
             JsonObject json = JsonParser.parseString(body).getAsJsonObject();
             items = json.has("items") ? json.getAsJsonArray("items") : new JsonArray();
+            if (!items.isEmpty()) Minecraft.getInstance().execute(() -> {
+                if (Minecraft.getInstance().screen instanceof RovianMenuScreen screen) screen.reloadShop();
+            });
         }).exceptionally(e -> { status = "Shop load failed: " + rootMessage(e); return null; });
     }
 
