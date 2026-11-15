@@ -1,0 +1,37 @@
+name: Build Rovian Fabric Mod
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - rovian-fabric-1.21.11
+    paths:
+      - "rovian-fabric/**"
+      - ".github/workflows/build-rovian-fabric.yml"
+  pull_request:
+    paths:
+      - "rovian-fabric/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.2"
+      - name: Build mod
+        working-directory: rovian-fabric
+        run: gradle build
+      - name: Upload mod JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: rovian-client-1.21.11
+          path: rovian-fabric/build/libs/rovian-client-*.jar
+          if-no-files-found: error
