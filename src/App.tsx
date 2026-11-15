@@ -15,7 +15,7 @@ const descriptions: Record<Page, string> = {
   Settings: "Configure the launcher and game runtime.",
   Accounts: "Manage your Minecraft accounts securely.",
 };
-type ShopItem = { id: string; name: string; description: string; price: number; icon: string };
+type ShopItem = { id: string; name: string; description: string; price: number; icon: string; imageUrl?: string };
 const shopItems: ShopItem[] = [
   { id: "cyan-name", name: "Cyan Username", description: "A bright cyan name accent on your Rovian profile.", price: 250, icon: "✦" },
   { id: "blue-banner", name: "Blue Banner", description: "A clean blue profile banner.", price: 400, icon: "▰" },
@@ -32,7 +32,7 @@ function App() {
   const [purchases, setPurchases] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("rovian.jems.purchases") || "[]"); } catch { return []; }
   });
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState("");\n  const [capeItems, setCapeItems] = useState<ShopItem[]>([]);
   const [discordLinked, setDiscordLinked] = useState(false);
   useEffect(() => {
     invoke<{ name: string; version: string }>("app_info")
@@ -40,7 +40,7 @@ function App() {
       .catch(() => setAppVersion("Development"));
     try { setDiscordLinked(localStorage.getItem("rovian.discord.linked") === "true"); } catch { /* storage unavailable */ }
   }, []);
-  const ownedItems = useMemo(() => new Set(purchases), [purchases]);
+  useEffect(() => {\n    const base = (import.meta as any).env?.VITE_ROVIAN_API_URL as string | undefined;\n    if (!base) return;\n    fetch(`${base.replace(/\\/$/, "")}/api/shop/items`).then(r => r.ok ? r.json() : Promise.reject()).then(data => {\n      if (Array.isArray(data.items)) setCapeItems(data.items.filter((x: any) => x.type === "cape").map((x: any) => ({ id: x.id, name: x.name, description: "Community cape uploaded by Rovian staff.", price: x.price, icon: "✦", imageUrl: x.imageUrl })));\n    }).catch(() => setNotice("Could not load the live shop catalog."));\n  }, []);\n  const ownedItems = useMemo(() => new Set(purchases), [purchases]);
   function buy(item: ShopItem) {
     if (ownedItems.has(item.id)) { setNotice("You already own this item."); return; }
     if (jems < item.price) { setNotice("Not enough Jems. Link Discord to claim the 200 Jems reward, or earn Jems through future events."); return; }
@@ -75,7 +75,7 @@ function App() {
         </div><div className="section-heading"><div><h3>Jems & account</h3><p>Your currency and account connections.</p></div></div>
         <div className="cards"><article className="info-card"><span className="card-icon">◆ {jems.toLocaleString()}</span><h4>Jem balance</h4><p>Your current wallet balance.</p><button className="card-action" onClick={() => setPage("Jems")}>Open wallet →</button></article><article className="info-card"><span className="card-icon">02</span><h4>Jem Shop</h4><p>Browse profile cosmetics and spend Jems.</p><button className="card-action" onClick={() => setPage("Shop")}>Browse shop →</button></article><article className="info-card"><span className="card-icon">03</span><h4>Discord linking</h4><p>{discordLinked ? "Discord is linked." : "Connect Discord to claim the 200 Jems reward."}</p><button className="card-action" onClick={() => setPage("Discord")}>Open Discord →</button></article></div></> :
         page === "Jems" ? <div className="wallet-panel"><div className="wallet-top"><div><div className="eyebrow">YOUR WALLET</div><div className="wallet-balance">◆ {jems.toLocaleString()} <span>JEMS</span></div><p>Jems are Rovian's virtual currency for in-app cosmetics.</p></div><div className="wallet-gem">◆</div></div><div className="wallet-bottom"><div><strong>Discord linking reward</strong><p>Link your Discord account to receive 200 Jems once. Reward is granted only after the link is verified.</p></div><button className="secondary-button" onClick={() => setPage("Discord")}>Link Discord</button></div><p className="fine-print">Wallet is currently stored on this device. It is not synced to an account or server yet.</p></div> :
-        page === "Shop" ? <><div className="shop-toolbar"><span>PROFILE CUSTOMISATION</span><span className="balance-inline">◆ {jems.toLocaleString()} Jems</span></div><div className="shop-grid">{shopItems.map(item => <article className="shop-card" key={item.id}><div className="shop-art">{item.icon}</div><h3>{item.name}</h3><p>{item.description}</p><div className="shop-buy-row"><strong>◆ {item.price}</strong><button disabled={ownedItems.has(item.id)} onClick={() => buy(item)}>{ownedItems.has(item.id) ? "OWNED" : "BUY"}</button></div></article>)}</div><p className="fine-print">Purchases are currently local to this device. Online account sync and gifting are not connected yet.</p></> :
+        page === "Shop" ? <><div className="shop-toolbar"><span>PROFILE CUSTOMISATION</span><span className="balance-inline">◆ {jems.toLocaleString()} Jems</span></div><div className="shop-grid">{[...shopItems, ...capeItems].map(item => <article className="shop-card" key={item.id}><div className="shop-art">{item.imageUrl ? <img src={item.imageUrl} alt={item.name} /> : item.icon}</div><h3>{item.name}</h3><p>{item.description}</p><div className="shop-buy-row"><strong>◆ {item.price}</strong><button disabled={ownedItems.has(item.id)} onClick={() => buy(item)}>{ownedItems.has(item.id) ? "OWNED" : "BUY"}</button></div></article>)}</div><p className="fine-print">Purchases are currently local to this device. Online account sync and gifting are not connected yet.</p></> :
         page === "Discord" ? <div className="connect-panel"><div className="discord-mark">◉</div><h2>{discordLinked ? "Discord connected" : "Connect your Discord"}</h2><p>Link your Discord account to your Rovian profile. Verified linking grants a one-time bonus of <strong>200 Jems</strong>.</p><div className="connect-status"><span className={discordLinked ? "status-dot" : "status-dot muted"} />{discordLinked ? "Connected" : "Not connected"}</div><button className="primary-button" onClick={startDiscordLink} disabled={discordLinked}>{discordLinked ? "LINKED" : "LINK DISCORD"}</button><p className="fine-print">OAuth is not active yet because this repository has no Discord application credentials or secure callback service. This button will not pretend to link an account.</p></div> :
         <div className="empty-state"><div className="empty-symbol">✧</div><h2>{page} is on the roadmap</h2><p>{descriptions[page]} This section will become functional in a future development phase.</p><span className="tag">IN DEVELOPMENT</span></div>}
         {notice && <div className="notice" role="status">{notice}<button onClick={() => setNotice("")}>×</button></div>}
