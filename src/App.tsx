@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 type Page = "Home" | "Instances" | "Mods" | "Modpacks" | "Cosmetics" | "Settings" | "Accounts";
@@ -14,13 +14,12 @@ const descriptions: Record<Page, string> = {
 };
 function App() {
   const [page, setPage] = useState<Page>("Home");
-  const [status, setStatus] = useState("Desktop shell ready");
   const [appVersion, setAppVersion] = useState("Loading…");
-  useState(() => {
+  useEffect(() => {
     invoke<{ name: string; version: string }>("app_info")
       .then(info => setAppVersion(info.version))
       .catch(() => setAppVersion("Development"));
-  });
+  }, []);
   return <div className="shell">
     <aside className="sidebar">
       <div className="brand"><div className="brand-mark">R</div><div><strong>ROVIAN</strong><span>CLIENT</span></div></div>
@@ -40,7 +39,7 @@ function App() {
         </div><div className="section-heading"><div><h3>Getting started</h3><p>The launcher foundation is in place. Core game features are next.</p></div></div>
         <div className="cards"><article className="info-card"><span className="card-icon">01</span><h4>Connect an account</h4><p>Microsoft sign-in is not implemented yet.</p><span className="tag">NOT AVAILABLE YET</span></article><article className="info-card"><span className="card-icon">02</span><h4>Create an instance</h4><p>Instance management is planned for a later phase.</p><span className="tag">NOT AVAILABLE YET</span></article><article className="info-card"><span className="card-icon">03</span><h4>Manage your mods</h4><p>Mod discovery and installation are not connected yet.</p><span className="tag">NOT AVAILABLE YET</span></article></div></> :
         <div className="empty-state"><div className="empty-symbol">✧</div><h2>{page} is on the roadmap</h2><p>{descriptions[page]} This section will become functional in a future development phase. No placeholder actions are presented as working features.</p><span className="tag">IN DEVELOPMENT</span></div>}
-        <footer><span>© ROVIAN CLIENT</span><span>{status}</span></footer>
+        <footer><span>© ROVIAN CLIENT</span><span>Desktop shell ready</span></footer>
       </section>
     </main>
   </div>;
