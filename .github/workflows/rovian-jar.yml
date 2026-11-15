@@ -3,6 +3,7 @@ name: Build Rovian JAR
 on:
   push:
     branches: [rovian-fabric-1.21.11]
+    tags: ["rovian-v*"]
     paths:
       - "rovian-fabric/**"
       - ".github/workflows/rovian-jar.yml"
@@ -12,9 +13,6 @@ on:
       - "rovian-fabric/**"
       - ".github/workflows/rovian-jar.yml"
   workflow_dispatch:
-  push:
-    tags:
-      - "rovian-v*"
 
 permissions:
   contents: write
