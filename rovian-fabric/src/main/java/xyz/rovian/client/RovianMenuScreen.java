@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.UUID;
 
@@ -139,7 +138,7 @@ public final class RovianMenuScreen extends Screen {
     }
 
     private Component modak(String value) {
-        return Component.literal(value).withStyle(style -> style.withFont(ResourceLocation.fromNamespaceAndPath("rovian", "default")));
+        return Component.literal(value);
     }
 
     private void text(GuiGraphics g, String value, int x, int y, int color) {
