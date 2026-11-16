@@ -15,8 +15,8 @@ import java.util.concurrent.CompletableFuture;
 
 public final class RovianApi {
     private static final HttpClient HTTP = HttpClient.newHttpClient();
-    private static String baseUrl = "https://YOUR-RAILWAY-DOMAIN";
-    private static volatile String status = "Set your bot's public Railway URL.";
+    private static String baseUrl = "https://rovianbot-production.up.railway.app";
+    private static volatile String status = "Connecting to Rovian services...";
     private static volatile int jems = 0;
     private static volatile boolean linked = false;
     private static volatile JsonArray items = new JsonArray();
