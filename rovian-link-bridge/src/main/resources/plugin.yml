@@ -1,0 +1,14 @@
+name: RovianLinkBridge
+version: '${version}'
+main: xyz.rovian.bridge.RovianLinkBridge
+api-version: '1.21.11'
+author: Rovian
+commands:
+  rovianlink:
+    description: Generate a secure Discord linking code for your Minecraft account.
+    usage: /rovianlink
+    permission: rovian.link
+permissions:
+  rovian.link:
+    description: Allows a player to link their own Minecraft account.
+    default: true
