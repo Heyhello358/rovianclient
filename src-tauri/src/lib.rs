@@ -1,9 +1,17 @@
+use serde::Serialize;
+
+#[derive(Serialize)]
+struct AppInfo {
+    name: &'static str,
+    version: &'static str,
+}
+
 #[tauri::command]
-fn app_info() -> serde_json::Value {
-    serde_json::json!({
-        "name": "Rovian Client",
-        "version": env!("CARGO_PKG_VERSION")
-    })
+fn app_info() -> AppInfo {
+    AppInfo {
+        name: "Rovian Client",
+        version: env!("CARGO_PKG_VERSION"),
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

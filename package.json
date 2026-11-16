@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "description": "Rovian Client - a Minecraft Java Edition launcher and client",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

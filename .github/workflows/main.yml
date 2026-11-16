@@ -7,6 +7,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     strategy:
@@ -37,7 +44,7 @@ jobs:
           VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
           PLATFORM=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
           ARCH=$(echo "$RUNNER_ARCH" | tr '[:upper:]' '[:lower:]')
-          find src-tauri/target/release/bundle -type f \\( -iname '*.exe' -o -iname '*.msi' -o -iname '*.dmg' -o -iname '*.deb' -o -iname '*.rpm' -o -iname '*.appimage' \\) -print0 |
+          find src-tauri/target/release/bundle -type f \( -iname '*.exe' -o -iname '*.msi' -o -iname '*.dmg' -o -iname '*.deb' -o -iname '*.rpm' -o -iname '*.appimage' \) -print0 |
           while IFS= read -r -d '' file; do
             extension="${file##*.}"
             directory=$(dirname "$file")
