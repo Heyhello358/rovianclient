@@ -86,13 +86,7 @@ public final class RovianApi {
     }
 
     public static void startLink() {
-        JsonObject body = new JsonObject();
-        body.addProperty("minecraftUuid", uuid());
-        body.addProperty("minecraftName", playerName());
-        request("POST", "/api/link/start", body.toString()).thenAccept(response -> {
-            JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-            status = "Run /link " + json.get("code").getAsString() + " in your Discord server within 10 minutes.";
-        }).exceptionally(e -> { status = "Link failed: " + rootMessage(e); return null; });
+        status = "Run /rovianlink on a verified online-mode Minecraft server, then enter /link CODE in Discord.";
     }
 
     public static void purchase(String itemId) {
