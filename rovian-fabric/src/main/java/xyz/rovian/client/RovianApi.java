@@ -20,6 +20,7 @@ public final class RovianApi {
     private static volatile int jems = 0;
     private static volatile boolean linked = false;
     private static volatile JsonArray items = new JsonArray();
+    private static volatile JsonArray cosmetics = new JsonArray();
 
     private RovianApi() {}
 
@@ -32,6 +33,7 @@ public final class RovianApi {
     public static int jems() { return jems; }
     public static boolean linked() { return linked; }
     public static JsonArray items() { return items.deepCopy(); }
+    public static JsonArray cosmetics() { return cosmetics.deepCopy(); }
 
     private static UUID playerUuid() {
         return Minecraft.getInstance().getUser().getProfileId();
@@ -76,6 +78,17 @@ public final class RovianApi {
             jems = json.has("jems") ? json.get("jems").getAsInt() : 0;
             status = linked ? "Discord linked. Balance updated." : "Discord not linked yet.";
         }).exceptionally(e -> { status = "Connection failed: " + rootMessage(e); return null; });
+        if (linked) {
+            request("GET", "/api/cosmetics/" + id, "").thenAccept(body -> {
+                JsonObject json = JsonParser.parseString(body).getAsJsonObject();
+                cosmetics = json.has("items") ? json.getAsJsonArray("items") : new JsonArray();
+                Minecraft.getInstance().execute(() -> {
+                    if (Minecraft.getInstance().screen instanceof RovianMenuScreen screen) screen.reloadShop();
+                });
+            }).exceptionally(e -> { status = "Cosmetics load failed: " + rootMessage(e); return null; });
+        } else {
+            cosmetics = new JsonArray();
+        }
         request("GET", "/api/shop/items", "").thenAccept(body -> {
             JsonObject json = JsonParser.parseString(body).getAsJsonObject();
             items = json.has("items") ? json.getAsJsonArray("items") : new JsonArray();
@@ -96,6 +109,16 @@ public final class RovianApi {
         request("POST", "/api/shop/purchase/request", body.toString()).thenAccept(response -> {
             status = "Purchase confirmation sent to your linked Discord DMs.";
         }).exceptionally(e -> { status = "Purchase request failed: " + rootMessage(e); return null; });
+    }
+
+    public static void equip(String itemId) {
+        JsonObject body = new JsonObject();
+        body.addProperty("uuid", uuid());
+        body.addProperty("itemId", itemId);
+        request("POST", "/api/cosmetics/equip", body.toString()).thenAccept(response -> {
+            status = "Cosmetic equipped in your Rovian inventory.";
+            refresh();
+        }).exceptionally(e -> { status = "Equip failed: " + rootMessage(e); return null; });
     }
 
     private static String rootMessage(Throwable error) {
