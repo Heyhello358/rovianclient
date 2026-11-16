@@ -1,0 +1,3 @@
+api-url: 'https://rovianbot-production.up.railway.app'
+# Must match API_SECRET on the Rovian bot host. Keep this value private.
+api-secret: 'CHANGE-ME'
