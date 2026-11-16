@@ -3,12 +3,13 @@
   "id": "rovian",
   "version": "${version}",
   "name": "Rovian Client",
-  "description": "A custom Rovian title screen and quick menu for Minecraft 1.21.11.",
+  "description": "Rovian Client interface and quick menu for Minecraft 1.21.11.",
   "environment": "client",
   "entrypoints": {
-    "client": ["xyz.rovian.client.RovianClient"]
+    "client": [
+      "xyz.rovian.client.RovianClient"
+    ]
   },
-  "mixins": ["rovian.mixins.json"],
   "depends": {
     "fabricloader": ">=0.18.1",
     "minecraft": "1.21.11",
