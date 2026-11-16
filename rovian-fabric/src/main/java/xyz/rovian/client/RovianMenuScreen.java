@@ -100,6 +100,19 @@ public final class RovianMenuScreen extends Screen {
                     minecraft.setScreen(new OptionsScreen(this, minecraft.options)))
                     .bounds(contentLeft() + 180, 202, 170, 28).build());
         } else if (page == Page.COSMETICS) {
+            JsonArray owned = RovianApi.cosmetics();
+            int shown = Math.min(owned.size(), 6);
+            for (int i = 0; i < shown; i++) {
+                JsonObject item = owned.get(i).getAsJsonObject();
+                String id = item.get("id").getAsString();
+                boolean equipped = item.has("equipped") && item.get("equipped").getAsInt() == 1;
+                int y = 166 + i * 34;
+                addRenderableWidget(Button.builder(Component.literal(equipped ? "EQUIPPED" : "EQUIP"),
+                        button -> RovianApi.equip(id))
+                        .bounds(width - 150, y, 112, 24).build());
+            }
+            addRenderableWidget(Button.builder(Component.literal("REFRESH INVENTORY"), b -> RovianApi.refresh())
+                    .bounds(width - 178, 18, 158, 24).build());
             addRenderableWidget(Button.builder(Component.literal("VISIT JEMS SHOP"), b -> navigate(Page.SHOP))
                     .bounds(contentLeft() + 18, 225, 160, 28).build());
         }
@@ -205,11 +218,22 @@ public final class RovianMenuScreen extends Screen {
                 }
             }
         } else if (page == Page.COSMETICS) {
-            panel(g, x, 82, w, 142, PANEL);
+            panel(g, x, 82, w, 310, PANEL);
             text(g, "YOUR COSMETICS", x + 18, 100, ACCENT);
-            text(g, "Cosmetic inventory and in-game equipping are not connected yet.", x + 18, 130, TEXT);
-            text(g, "Items purchased through the shop will need a client-side renderer", x + 18, 154, MUTED);
-            text(g, "before capes and other cosmetics can appear on your character.", x + 18, 171, MUTED);
+            JsonArray owned = RovianApi.cosmetics();
+            if (owned.isEmpty()) {
+                text(g, RovianApi.linked() ? "No purchased cosmetics yet." : "Link Discord to load your inventory.", x + 18, 132, TEXT);
+            } else {
+                for (int i = 0; i < Math.min(owned.size(), 6); i++) {
+                    JsonObject item = owned.get(i).getAsJsonObject();
+                    String name = item.has("name") ? item.get("name").getAsString() : "Cosmetic";
+                    boolean equipped = item.has("equipped") && item.get("equipped").getAsInt() == 1;
+                    int y = 132 + i * 34;
+                    text(g, name, x + 18, y, TEXT);
+                    text(g, equipped ? "EQUIPPED" : "OWNED", x + 220, y, equipped ? ACCENT : MUTED);
+                }
+            }
+            text(g, "Equipping is saved to your account. Cape rendering is not implemented yet.", x + 18, 360, MUTED);
         } else if (page == Page.SETTINGS) {
             panel(g, x, 82, w, 126, PANEL);
             text(g, "CONNECTION", x + 18, 100, ACCENT);
