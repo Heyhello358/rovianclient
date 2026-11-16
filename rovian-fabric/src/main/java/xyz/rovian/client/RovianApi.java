@@ -77,18 +77,9 @@ public final class RovianApi {
             linked = json.has("linked") && json.get("linked").getAsBoolean();
             jems = json.has("jems") ? json.get("jems").getAsInt() : 0;
             status = linked ? "Discord linked. Balance updated." : "Discord not linked yet.";
+            if (linked) loadCosmetics(id);
+            else cosmetics = new JsonArray();
         }).exceptionally(e -> { status = "Connection failed: " + rootMessage(e); return null; });
-        if (linked) {
-            request("GET", "/api/cosmetics/" + id, "").thenAccept(body -> {
-                JsonObject json = JsonParser.parseString(body).getAsJsonObject();
-                cosmetics = json.has("items") ? json.getAsJsonArray("items") : new JsonArray();
-                Minecraft.getInstance().execute(() -> {
-                    if (Minecraft.getInstance().screen instanceof RovianMenuScreen screen) screen.reloadShop();
-                });
-            }).exceptionally(e -> { status = "Cosmetics load failed: " + rootMessage(e); return null; });
-        } else {
-            cosmetics = new JsonArray();
-        }
         request("GET", "/api/shop/items", "").thenAccept(body -> {
             JsonObject json = JsonParser.parseString(body).getAsJsonObject();
             items = json.has("items") ? json.getAsJsonArray("items") : new JsonArray();
@@ -96,6 +87,16 @@ public final class RovianApi {
                 if (Minecraft.getInstance().screen instanceof RovianMenuScreen screen) screen.reloadShop();
             });
         }).exceptionally(e -> { status = "Shop load failed: " + rootMessage(e); return null; });
+    }
+
+    private static void loadCosmetics(String id) {
+        request("GET", "/api/cosmetics/" + id, "").thenAccept(body -> {
+            JsonObject json = JsonParser.parseString(body).getAsJsonObject();
+            cosmetics = json.has("items") ? json.getAsJsonArray("items") : new JsonArray();
+            Minecraft.getInstance().execute(() -> {
+                if (Minecraft.getInstance().screen instanceof RovianMenuScreen screen) screen.reloadShop();
+            });
+        }).exceptionally(e -> { status = "Cosmetics load failed: " + rootMessage(e); return null; });
     }
 
     public static void startLink() {
